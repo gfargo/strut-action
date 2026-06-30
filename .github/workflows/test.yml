@@ -1,0 +1,34 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck entrypoint
+        run: shellcheck entrypoint.sh
+
+  smoke:
+    name: Smoke (dry-run, no VPS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Exercises the real action against a fixture strut project.
+      # `deploy --dry-run` echoes the plan and never touches Docker or SSH,
+      # so this validates install + flag wiring with no secrets or VPS.
+      - name: Run strut-action (deploy --dry-run)
+        uses: ./
+        with:
+          stack: web
+          command: deploy
+          env: prod
+          dry-run: true
+          args: --skip-validation
+          working-directory: tests/fixture
+          # Dummy key — unused on the dry-run path, but the input is required.
+          ssh-key: "not-a-real-key"

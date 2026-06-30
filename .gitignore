@@ -1,2 +1,6 @@
 .DS_Store
 *.log
+
+# Runtime env files materialized by the action during tests
+tests/fixture/.env
+tests/fixture/.*.env

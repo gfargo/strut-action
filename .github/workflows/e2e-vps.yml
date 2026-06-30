@@ -1,0 +1,48 @@
+name: E2E (real VPS)
+
+# Manual end-to-end test against a real VPS over SSH.
+#
+# Add these repository secrets first (Settings → Secrets and variables → Actions):
+#   STRUT_HOST      - VPS host or IP
+#   STRUT_USER      - VPS SSH user (e.g. ubuntu, deploy)
+#   STRUT_SSH_KEY   - private SSH key authorized on the VPS
+#
+# Defaults to `exec "uname -a"` — a safe, read-only command that proves SSH
+# connectivity and strut's remote path end-to-end without changing anything.
+# Switch `command` to health / release (with dry-run) to exercise more.
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'strut command (exec, health, release, deploy, status)'
+        default: 'exec'
+      args:
+        description: 'Extra args (for exec, this is the remote command)'
+        default: 'uname -a'
+      env:
+        description: 'Environment name (.<env>.env)'
+        default: 'prod'
+      dry-run:
+        description: 'Pass --dry-run'
+        type: boolean
+        default: false
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run strut-action against the VPS
+        uses: ./
+        with:
+          stack: web
+          working-directory: tests/fixture
+          command: ${{ inputs.command }}
+          args: ${{ inputs.args }}
+          env: ${{ inputs.env }}
+          dry-run: ${{ inputs.dry-run }}
+          host: ${{ secrets.STRUT_HOST }}
+          user: ${{ secrets.STRUT_USER }}
+          ssh-key: ${{ secrets.STRUT_SSH_KEY }}

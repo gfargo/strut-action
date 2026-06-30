@@ -1,0 +1,32 @@
+# Example: deploy a strut stack to your VPS on every push to main.
+# Copy into .github/workflows/deploy.yml in your strut project repo.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy with strut
+        uses: gfargo/strut-action@v1
+        with:
+          stack: my-app
+          command: release
+          env: prod
+          strict: true
+          host: ${{ secrets.STRUT_HOST }}
+          user: ${{ secrets.STRUT_USER }}
+          ssh-key: ${{ secrets.STRUT_SSH_KEY }}
+          # Full .prod.env contents stored as one secret (optional if the VPS
+          # already has its env, or you use `strut secrets push` separately):
+          env-file: ${{ secrets.STRUT_PROD_ENV }}

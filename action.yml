@@ -1,0 +1,89 @@
+name: 'strut deploy'
+description: 'Deploy Docker Compose stacks to any VPS over SSH with strut — no Kubernetes.'
+author: 'gfargo'
+
+branding:
+  icon: 'upload-cloud'
+  color: 'yellow'
+
+inputs:
+  stack:
+    description: 'Stack name (a directory under stacks/ in your project).'
+    required: true
+  command:
+    description: 'strut command to run: release | deploy | ship | health | stop | status.'
+    required: false
+    default: 'release'
+  env:
+    description: 'Environment name. Reads .<env>.env (e.g. "prod" → .prod.env). Empty uses .env.'
+    required: false
+    default: ''
+  services:
+    description: 'Service profile passed as --services (e.g. full, messaging, ui).'
+    required: false
+    default: ''
+  strict:
+    description: 'Pass --strict (fail the release if migrations fail).'
+    required: false
+    default: 'false'
+  dry-run:
+    description: 'Pass --dry-run to preview without executing.'
+    required: false
+    default: 'false'
+  args:
+    description: 'Extra raw arguments appended to the strut command.'
+    required: false
+    default: ''
+  ssh-key:
+    description: 'Private SSH key authorized on the VPS. ALWAYS pass via a secret.'
+    required: true
+  host:
+    description: 'VPS host or IP. Sets VPS_HOST. Optional if your repo config/topology already has it.'
+    required: false
+    default: ''
+  user:
+    description: 'VPS SSH user. Sets VPS_USER.'
+    required: false
+    default: ''
+  port:
+    description: 'VPS SSH port. Sets VPS_PORT.'
+    required: false
+    default: '22'
+  known-hosts:
+    description: 'known_hosts entries for the VPS. If empty, the host key is fetched via ssh-keyscan.'
+    required: false
+    default: ''
+  env-file:
+    description: 'Full contents of the .<env>.env file. ALWAYS pass via a secret. Optional.'
+    required: false
+    default: ''
+  strut-version:
+    description: 'strut version to install: latest | main | vX.Y.Z.'
+    required: false
+    default: 'latest'
+  working-directory:
+    description: 'Project root that contains strut.conf and stacks/.'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      env:
+        INPUT_STACK: ${{ inputs.stack }}
+        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_ENV: ${{ inputs.env }}
+        INPUT_SERVICES: ${{ inputs.services }}
+        INPUT_STRICT: ${{ inputs.strict }}
+        INPUT_DRY_RUN: ${{ inputs.dry-run }}
+        INPUT_ARGS: ${{ inputs.args }}
+        INPUT_SSH_KEY: ${{ inputs.ssh-key }}
+        INPUT_HOST: ${{ inputs.host }}
+        INPUT_USER: ${{ inputs.user }}
+        INPUT_PORT: ${{ inputs.port }}
+        INPUT_KNOWN_HOSTS: ${{ inputs.known-hosts }}
+        INPUT_ENV_FILE: ${{ inputs.env-file }}
+        INPUT_STRUT_VERSION: ${{ inputs.strut-version }}
+        INPUT_WORKING_DIRECTORY: ${{ inputs.working-directory }}
+      run: ${{ github.action_path }}/entrypoint.sh

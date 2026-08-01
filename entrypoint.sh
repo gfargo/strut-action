@@ -19,7 +19,7 @@ ssh_user="${INPUT_USER:-}"
 ssh_port="${INPUT_PORT:-22}"
 known_hosts="${INPUT_KNOWN_HOSTS:-}"
 env_file_contents="${INPUT_ENV_FILE:-}"
-strut_version="${INPUT_STRUT_VERSION:-v0.45.1}"
+strut_version="${INPUT_STRUT_VERSION:-v0.45.2}"
 workdir="${INPUT_WORKING_DIRECTORY:-.}"
 
 # GitHub Actions log grouping helpers (no-ops outside Actions).

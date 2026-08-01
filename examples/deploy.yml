@@ -21,7 +21,7 @@ jobs:
         uses: gfargo/strut-action@v1
         with:
           stack: my-app
-          command: release
+          command: deploy
           env: prod
           strict: true
           host: ${{ secrets.STRUT_HOST }}

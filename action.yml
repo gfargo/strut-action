@@ -11,9 +11,9 @@ inputs:
     description: 'Stack name (a directory under stacks/ in your project).'
     required: true
   command:
-    description: 'strut command to run: release | deploy | ship | health | stop | status.'
+    description: 'strut command to run: deploy | ship | health | stop | status. deploy targets the host the stack maps to; the action adds --require-remote so a stack resolving to no VPS fails instead of deploying to the runner. release is an alias for deploy.'
     required: false
-    default: 'release'
+    default: 'deploy'
   env:
     description: 'Environment name. Reads .<env>.env (e.g. "prod" → .prod.env). Empty uses .env.'
     required: false

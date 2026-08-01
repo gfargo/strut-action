@@ -6,7 +6,7 @@ Deploy Docker Compose stacks to **any VPS over SSH** from GitHub Actions — pow
 - uses: gfargo/strut-action@v1
   with:
     stack: my-app
-    command: release
+    command: deploy
     env: prod
     host: ${{ secrets.STRUT_HOST }}
     user: ${{ secrets.STRUT_USER }}
@@ -20,10 +20,10 @@ This action installs strut, wires up the SSH key and connection config, and runs
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
 | `stack` | ✅ | — | Stack name (a directory under `stacks/`). |
-| `command` | | `release` | `release` \| `deploy` \| `ship` \| `health` \| `stop` \| `status`. |
+| `command` | | `deploy` | `deploy` \| `ship` \| `health` \| `stop` \| `status`. `deploy` goes to the host the stack maps to; the action adds `--require-remote` so a stack that resolves to no VPS fails instead of deploying to the runner. `release` is an accepted alias. |
 | `env` | | `''` | Environment name; reads `.<env>.env` (e.g. `prod` → `.prod.env`). |
 | `services` | | `''` | Service profile passed as `--services` (e.g. `full`). |
-| `strict` | | `false` | Pass `--strict` (fail the release if migrations fail). |
+| `strict` | | `false` | Pass `--strict` (fail the deploy if migrations fail). |
 | `dry-run` | | `false` | Pass `--dry-run` to preview without executing. |
 | `args` | | `''` | Extra raw arguments appended to the command. |
 | `ssh-key` | ✅ | — | Private SSH key authorized on the VPS. **Always pass via a secret.** |

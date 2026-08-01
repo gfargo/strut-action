@@ -103,6 +103,19 @@ set -- "$stack" "$command"
 [ "$strict" = "true" ]  && set -- "$@" --strict
 [ "$dry_run" = "true" ] && set -- "$@" --dry-run
 
+# A CI runner can never legitimately mean "deploy to this runner". Since strut
+# 0.45.0 `deploy` resolves its target from the stack's topology, and falls back
+# to the local Docker daemon when that resolves to nothing — on a runner that is
+# a no-op which exits 0 and reports a successful deploy. --require-remote makes
+# it a hard failure instead. `release` is an alias for `deploy --require-remote`
+# and already implies it; passing it for both keeps the two spellings identical.
+#
+# Safe on older strut: unknown flags fall through the arg parser's catch-all and
+# are ignored. On < 0.45.0 you simply don't get the guard.
+case "$command" in
+  deploy|release) set -- "$@" --require-remote ;;
+esac
+
 echo "+ strut $* $extra_args"
 # extra_args is intentionally word-split to allow multiple raw flags.
 # shellcheck disable=SC2086

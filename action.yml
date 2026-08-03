@@ -60,7 +60,7 @@ inputs:
   strut-version:
     description: 'strut version to install: latest | main | vX.Y.Z.'
     required: false
-    default: 'v0.45.2'
+    default: 'v0.45.3'
   working-directory:
     description: 'Project root that contains strut.conf and stacks/.'
     required: false
